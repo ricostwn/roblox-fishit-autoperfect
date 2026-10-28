@@ -15,16 +15,38 @@ import mss
 import numpy as np
 from pynput import mouse
 
+# Cross-Platform Windows DPI Awareness
+if sys.platform == "win32":
+    try:
+        import ctypes
+        ctypes.windll.shcore.SetProcessDpiAwareness(2)
+    except Exception:
+        try:
+            import ctypes
+            ctypes.windll.user32.SetProcessDPIAware()
+        except Exception:
+            pass
+
 TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
 
 
 def play_sound(sound_name):
-    """Play macOS system audio chime in background."""
-    path = f"/System/Library/Sounds/{sound_name}.aiff"
-    if os.path.exists(path):
+    """Cross-platform audio feedback (macOS afplay & Windows winsound)."""
+    if sys.platform == "darwin":
+        path = f"/System/Library/Sounds/{sound_name}.aiff"
+        if os.path.exists(path):
+            try:
+                subprocess.Popen(["afplay", path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            except Exception:
+                pass
+    elif sys.platform == "win32":
         try:
-            subprocess.Popen(["afplay", path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            import winsound
+            if sound_name in ["Hero", "Ping", "Tink"]:
+                winsound.MessageBeep(winsound.MB_ICONASTERISK)
+            else:
+                winsound.MessageBeep(winsound.MB_ICONEXCLAMATION)
         except Exception:
             pass
 
@@ -63,17 +85,47 @@ def is_peak_green(pixel):
 
 
 def focus_roblox_window():
-    """Brings Roblox directly to the front and activates the window."""
-    try:
-        from AppKit import NSWorkspace, NSApplicationActivateIgnoringOtherApps
-        ws = NSWorkspace.sharedWorkspace()
-        apps = ws.runningApplications()
-        roblox = [a for a in apps if a.bundleIdentifier() == "com.roblox.RobloxPlayer"]
-        if roblox:
-            roblox[0].activateWithOptions_(NSApplicationActivateIgnoringOtherApps)
-            return True
-    except Exception:
-        pass
+    """Brings Roblox directly to the front (Cross-Platform: Windows user32 & macOS Cocoa)."""
+    if sys.platform == "darwin":
+        try:
+            from AppKit import NSWorkspace, NSApplicationActivateIgnoringOtherApps
+            ws = NSWorkspace.sharedWorkspace()
+            apps = ws.runningApplications()
+            roblox = [a for a in apps if a.bundleIdentifier() == "com.roblox.RobloxPlayer"]
+            if roblox:
+                roblox[0].activateWithOptions_(NSApplicationActivateIgnoringOtherApps)
+                return True
+        except Exception:
+            pass
+    elif sys.platform == "win32":
+        try:
+            import ctypes
+            import ctypes.wintypes
+
+            user32 = ctypes.windll.user32
+            found_hwnd = None
+
+            def enum_cb(hwnd, extra):
+                nonlocal found_hwnd
+                if user32.IsWindowVisible(hwnd):
+                    length = user32.GetWindowTextLengthW(hwnd)
+                    if length > 0:
+                        buff = ctypes.create_unicode_buffer(length + 1)
+                        user32.GetWindowTextW(hwnd, buff, length + 1)
+                        if "roblox" in buff.value.lower():
+                            found_hwnd = hwnd
+                            return False
+                return True
+
+            WNDENUMPROC = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.wintypes.HWND, ctypes.wintypes.LPARAM)
+            user32.EnumWindows(WNDENUMPROC(enum_cb), 0)
+
+            if found_hwnd:
+                user32.ShowWindow(found_hwnd, 9)  # SW_RESTORE
+                user32.SetForegroundWindow(found_hwnd)
+                return True
+        except Exception:
+            pass
     return False
 
 
@@ -295,9 +347,16 @@ class FishingEngine:
                 if auto_focus:
                     self.on_status_change("🚀 Focusing Roblox...", "#38bdf8")
                     focus_roblox_window()
-                    # Move mouse into Roblox viewport (center of screen, away from GUI)
-                    self.mouse_ctrl.position = (735, 450)
-                    time.sleep(0.35)  # Let macOS window focus settle
+                    # Move mouse into Roblox viewport (dynamically centers on 1080p, 1440p, 4K, Mac)
+                    try:
+                        with mss.MSS() as sct_m:
+                            primary = sct_m.monitors[1] if len(sct_m.monitors) > 1 else sct_m.monitors[0]
+                            cx = primary["left"] + primary["width"] // 2
+                            cy = primary["top"] + primary["height"] // 2
+                            self.mouse_ctrl.position = (cx, cy)
+                    except Exception:
+                        self.mouse_ctrl.position = (735, 450)
+                    time.sleep(0.35)  # Let window focus settle
 
                 self.on_status_change("🟢 RUNNING (Loop Active)", "#10b981")
                 self.auto_loop()

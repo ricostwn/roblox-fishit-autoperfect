@@ -3,13 +3,13 @@
 # 🎣 roblox-fishit-autoperfect
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
-[![Platform macOS](https://img.shields.io/badge/platform-macOS-lightgrey.svg?style=flat&logo=apple&logoColor=white)](https://apple.com)
+[![Platform Windows & macOS](https://img.shields.io/badge/platform-Windows%20%7C%20macOS-blue.svg?style=flat)](https://github.com/ricostwn/roblox-fishit-autoperfect)
 [![OpenCV](https://img.shields.io/badge/OpenCV-5.0+-5C3EE8.svg?style=flat&logo=opencv&logoColor=white)](https://opencv.org/)
 [![CustomTkinter](https://img.shields.io/badge/GUI-CustomTkinter-blue.svg?style=flat)](https://github.com/TomSchimansky/CustomTkinter)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-An intelligent, non-intrusive autonomous fishing assistant designed for Roblox *Fish It!*.  
-Combines **dynamic OpenCV template matching**, **sub-millisecond frame processing**, and a sleek **macOS dark-mode HUD**.
+An intelligent, cross-platform autonomous fishing assistant designed for Roblox *Fish It!*.  
+Combines **dynamic OpenCV template matching**, **sub-millisecond frame processing**, and a sleek **dark-mode floating HUD** for **Windows & macOS**.
 
 [Features](#-key-features) • [How It Works](#-how-it-works) • [Installation](#-installation) • [Quick Start](#-quick-start) • [Permissions](#-macos-permissions) • [License](#-license)
 
@@ -25,9 +25,9 @@ Combines **dynamic OpenCV template matching**, **sub-millisecond frame processin
 
 - **🎯 Dynamic 2.0x Perfect Casts:** Uses real-time OpenCV template tracking to locate the 3D charge bar across any camera angle, rotation, or zoom, releasing at the exact millisecond the 2.0x Luck peak is reached.
 - **🌙 Day & Night Lighting Invariant:** Uses integer-safe channel dominance ratios rather than fragile static brightness thresholds, ensuring flawless detection in bright midday sun or pitch-black midnight cave lighting.
-- **🌀 Smart Auto-Reeling:** Automatically detects the in-game reeling minigame and rapid-clicks at low latency to reel the catch in, handling any fish rarity or duration.
+- **🌀 Smart Auto-Reeling:** Automatically detects the in-game reeling minigame via OpenCV template matching and rapid-clicks at low latency to reel the catch in, handling any fish rarity or duration.
 - **🛡️ Escape vs. Catch Verification:** Distinguishes between successful catches and fish escapes (`The fish got away!`), guaranteeing 100% accurate session metrics.
-- **🚀 Native macOS Window Auto-Focus:** Powered by Apple's Cocoa `NSWorkspace` API—clicking **START** automatically focuses Roblox and positions the cursor without requiring manual screen clicks.
+- **🚀 Native Window Auto-Focus (Cross-Platform):** Automatically brings Roblox to the foreground and centers the mouse cursor upon clicking **START** (powered by Windows `user32` on Windows and Cocoa `NSWorkspace` on macOS).
 - **🖥️ Dark-Mode Floating HUD:** Minimalist CustomTkinter overlay with live session statistics (Perfect Throws ratio, dynamic Accuracy %, fish catches, and session stopwatch).
 
 ---
@@ -36,7 +36,7 @@ Combines **dynamic OpenCV template matching**, **sub-millisecond frame processin
 
 ```mermaid
 flowchart TD
-    A[Start Bot via GUI] --> B[Auto-Focus Roblox & Position Cursor]
+    A[Start Bot via GUI] --> B[Auto-Focus Roblox & Center Cursor]
     B --> C[1. Hold Left Click to Charge]
     C --> D[OpenCV Dynamic Bar & Peak Tracking]
     D -->|Fill reaches 2.0x Peak| E[Instant Release: 2.0x Perfect!]
@@ -56,11 +56,12 @@ flowchart TD
 
 ```text
 roblox-fishit-autoperfect/
-├── app.py               # Modern CustomTkinter GUI application
+├── app.py               # Modern CustomTkinter GUI application (Windows & macOS)
 ├── main.py              # Lightweight headless / terminal engine
-├── Launch.command       # One-click double-clickable macOS desktop launcher
+├── Launch.bat           # One-click launcher for Windows
+├── Launch.command       # One-click launcher for macOS
 ├── config.json          # Persistent configuration settings & thresholds
-├── requirements.txt     # Python project dependencies
+├── requirements.txt     # Python project dependencies (PEP 508 cross-platform)
 ├── templates/           # OpenCV reference templates for dynamic tracking
 │   ├── charge_label.png # Bar anchor template
 │   └── stop_button.png  # Reeling detection template
@@ -76,11 +77,20 @@ roblox-fishit-autoperfect/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/roblox-fishit-autoperfect.git
+git clone https://github.com/ricostwn/roblox-fishit-autoperfect.git
 cd roblox-fishit-autoperfect
 ```
 
 ### 2. Set Up Virtual Environment & Dependencies
+
+#### On Windows:
+```cmd
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+#### On macOS:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
@@ -91,13 +101,13 @@ pip install -r requirements.txt
 
 ## 🚀 Quick Start
 
-### Option 1: Double-Click Desktop Launcher (Recommended)
-Simply double-click **`Launch.command`** in Finder. It will automatically initialize the environment and launch the floating GUI.
+### Option 1: One-Click Desktop Launcher (Recommended)
+- **Windows:** Double-click **`Launch.bat`**
+- **macOS:** Double-click **`Launch.command`**
 
-### Option 2: Terminal Launch
+### Option 2: Command Line
 ```bash
-source .venv/bin/activate
-python3 app.py
+python app.py
 ```
 
 ### In-App Controls:

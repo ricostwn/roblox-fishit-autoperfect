@@ -17,11 +17,21 @@ CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.j
 
 
 def play_sound(sound_name):
-    """Play macOS system audio chime in background."""
-    path = f"/System/Library/Sounds/{sound_name}.aiff"
-    if os.path.exists(path):
+    """Cross-platform audio feedback (macOS afplay & Windows winsound)."""
+    if sys.platform == "darwin":
+        path = f"/System/Library/Sounds/{sound_name}.aiff"
+        if os.path.exists(path):
+            try:
+                subprocess.Popen(["afplay", path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            except Exception:
+                pass
+    elif sys.platform == "win32":
         try:
-            subprocess.Popen(["afplay", path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            import winsound
+            if sound_name in ["Hero", "Ping", "Tink"]:
+                winsound.MessageBeep(winsound.MB_ICONASTERISK)
+            else:
+                winsound.MessageBeep(winsound.MB_ICONEXCLAMATION)
         except Exception:
             pass
 
