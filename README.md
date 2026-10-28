@@ -13,6 +13,10 @@ Combines **dynamic OpenCV template matching**, **sub-millisecond frame processin
 
 [Features](#-key-features) • [How It Works](#-how-it-works) • [Installation](#-installation) • [Quick Start](#-quick-start) • [Permissions](#-macos-permissions) • [License](#-license)
 
+<br/>
+
+<img src="assets/demo.gif" alt="roblox-fishit-autoperfect Demo" width="720px" style="border-radius: 10px;"/>
+
 </div>
 
 ---
