@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎣 Fish It - Autonomous Perfection Fishing Bot
+# 🎣 roblox-fishit-autoperfect
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Platform macOS](https://img.shields.io/badge/platform-macOS-lightgrey.svg?style=flat&logo=apple&logoColor=white)](https://apple.com)
@@ -51,7 +51,7 @@ flowchart TD
 ## 📁 Project Structure
 
 ```text
-perfect-roblox/
+roblox-fishit-autoperfect/
 ├── app.py               # Modern CustomTkinter GUI application
 ├── main.py              # Lightweight headless / terminal engine
 ├── Launch.command       # One-click double-clickable macOS desktop launcher
@@ -72,8 +72,8 @@ perfect-roblox/
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/perfect-roblox.git
-cd perfect-roblox
+git clone https://github.com/your-username/roblox-fishit-autoperfect.git
+cd roblox-fishit-autoperfect
 ```
 
 ### 2. Set Up Virtual Environment & Dependencies
@@ -137,3 +137,14 @@ This software is developed strictly for educational and automation demonstration
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
+
+## ⚖️ Disclaimer
+
+This software is developed strictly for educational and automation demonstration purposes. Automating gameplay may violate the Terms of Service of specific platforms or experiences. Use responsibly and at your own discretion.
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
