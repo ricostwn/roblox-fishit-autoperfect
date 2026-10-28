@@ -1,0 +1,13 @@
+{
+  "use_timed_cast": true,
+  "cast_hold_ms": 865,
+  "target_x": 845,
+  "target_y": 416,
+  "roi_size": 3,
+  "release_delay_ms": 10,
+  "stop_button_x": 1095,
+  "stop_button_y": 816,
+  "cast_settle_delay": 1.5,
+  "post_catch_delay": 3.0,
+  "click_speed": 0.025
+}

@@ -1,0 +1,8 @@
+customtkinter>=6.0.0
+opencv-python-headless>=4.8.0
+mss>=9.0.1
+pynput>=1.7.6
+numpy>=1.24.0
+Pillow>=10.0.0
+pyobjc-framework-ApplicationServices>=8.0
+pyobjc-framework-Cocoa>=8.0
