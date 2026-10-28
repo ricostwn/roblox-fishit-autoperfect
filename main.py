@@ -66,23 +66,29 @@ class InfiniteAutoFisher:
         self.worker_thread = None
 
     def is_reeling_active(self, sct):
-        """Checks if the red [STOP] button is visible at (stop_x, stop_y)."""
-        box = {
-            "top": int(self.stop_y - 3),
-            "left": int(self.stop_x - 3),
-            "width": 7,
-            "height": 7
-        }
-        raw = sct.grab(box)
-        img = np.array(raw)
-        pixels_rgb = img[:, :, [2, 1, 0]]
+        """Uses OpenCV template matching to detect the [STOP] button with >0.75 confidence."""
+        if not hasattr(self, 'templ_stop') or self.templ_stop is None:
+            templ_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates", "stop_button.png")
+            if os.path.exists(templ_path):
+                import cv2
+                self.templ_stop = cv2.imread(templ_path, cv2.IMREAD_GRAYSCALE)
+            else:
+                self.templ_stop = None
 
-        for row in pixels_rgb:
-            for p in row:
-                r, g, b = int(p[0]), int(p[1]), int(p[2])
-                # Red [STOP] button: strong red compared to green and blue
-                if r > 165 and g < 100 and b < 120 and (r - g > 60):
-                    return True
+        if self.templ_stop is not None:
+            import cv2
+            box = {
+                "top": 760,
+                "left": 1020,
+                "width": 200,
+                "height": 110
+            }
+            raw = np.array(sct.grab(box))
+            gray = cv2.cvtColor(raw, cv2.COLOR_BGRA2GRAY)
+            res = cv2.matchTemplate(gray, self.templ_stop, cv2.TM_CCOEFF_NORMED)
+            _, max_val, _, _ = cv2.minMaxLoc(res)
+            return max_val > 0.75
+
         return False
 
     def cast_perfect_rod(self, sct):
